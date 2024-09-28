@@ -1,3 +1,8 @@
+# CMZ stuff
+.DS_Store
+*.zip
+*.xml
+
 _*
 
 # Byte-compiled / optimized / DLL files
