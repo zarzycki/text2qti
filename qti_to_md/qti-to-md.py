@@ -1,6 +1,7 @@
 import xml.etree.ElementTree as ET
 import re
 import html
+import argparse
 
 def strip_html_tags(text):
     """Remove HTML tags and unescape HTML entities from text."""
@@ -77,7 +78,10 @@ def parse_qti_to_markdown(qti_file):
             print("Error context could not be determined.")
         raise
 
-# Usage example
-qti_file = 'g064e4abf4f6914cfbd3637f83fe5cebb.xml'
-markdown_text = parse_qti_to_markdown(qti_file)
-print(markdown_text)
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Convert QTI XML to Markdown format.")
+    parser.add_argument("qti_file", type=str, help="Path to the QTI XML file to be converted.")
+    args = parser.parse_args()
+
+    markdown_text = parse_qti_to_markdown(args.qti_file)
+    print(markdown_text)
