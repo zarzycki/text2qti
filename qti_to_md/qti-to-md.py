@@ -3,10 +3,16 @@ import re
 import html
 import argparse
 
+def clean_punctuation(text):
+    """Convert curly quotes and apostrophes to straight quotes and apostrophes."""
+    text = text.replace('“', '"').replace('”', '"')  # Curly double quotes to straight
+    text = text.replace('‘', "'").replace('’', "'")  # Curly single quotes/apostrophes to straight
+    return text
+
 def strip_html_tags(text):
-    """Remove HTML tags and unescape HTML entities from text."""
+    """Remove HTML tags and unescape HTML entities from text, and clean punctuation."""
     clean = re.compile('<.*?>')  # Regular expression to match HTML tags
-    return html.unescape(re.sub(clean, '', text))  # Remove tags and unescape HTML
+    return clean_punctuation(html.unescape(re.sub(clean, '', text)))  # Remove tags, unescape, and clean punctuation
 
 def parse_qti_to_markdown(qti_file):
     try:
@@ -50,15 +56,19 @@ def parse_qti_to_markdown(qti_file):
                     answer_text = strip_html_tags(answer_text)
                     ident = response.get('ident')
 
+                    label = answer_labels[answer_index]
+
+                    # For Single-answer questions
                     if rcardinality == "Single":
-                        # Single-answer question
-                        label = answer_labels[answer_index]
                         if correct_answers and ident in correct_answers:
-                            markdown_output += f"*{label})  {answer_text}\n"
+                            # Correct answer
+                            markdown_output += f"*{label}) {answer_text}\n"
                         else:
+                            # Incorrect answer
                             markdown_output += f"{label})  {answer_text}\n"
+
+                    # For Multiple-answer questions
                     elif rcardinality == "Multiple":
-                        # Multiple-answer question
                         if correct_answers and ident in correct_answers:
                             markdown_output += f"[*] {answer_text}\n"
                         else:
